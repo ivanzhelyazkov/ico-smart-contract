@@ -1,27 +1,50 @@
 
-Smart Contracts for the Crowdsale of Jarvis ICO.
+## Smart Contracts for the Crowdsale of Jarvis ICO.
 
-Installation instructions :
+## Token details :
+Name : Jarvis Reward Token  
+Symbol : JRT  
+Decimals : 2  
+Amount : 420,000,000  
+Price : 0.10 USD  
 
----Backend---
-1. Install truffle - 
-npm install -g truffle
+Jarvis Reward Token is ERC-20 compliant.  
+ETH/USD rate is determined by an oracle.
 
-2. Install ganache - private blockchain simulator
-https://github.com/trufflesuite/ganache
+## Crowdsale Details :
+Crowdsale will be in 4 stages, one week each :   
+Pre-ICO stage - 30% token bonus  
+ICO stage 1 - 20% token bonus  
+ICO stage 2 - 10% token bonus  
+ICO stage 3 - 0% token bonus  
+Each stage will have a hard cap of 40,000,000 tokens.  
+Tokens will be distributed at the end of the ICO.  
+Unsold tokens will be burnt.  
 
-3. Run ganache, compile and deploy smart contracts :
-truffle migrate --network ganache
+## Token distribution details :
+Team and advisors - 60,000,000  
+DAO Pool - 30,000,000  
+Partnership Pool - 50,000,000  
+Bounty and Airdrop campaign - 20,000,000  
 
----Frontend---
+ICO - 260,000,000  
 
-4. Install metamask extension for google chrome(port 7545)
-or disable CORS in browser ;
+## Developer instructions :
 
-5. Run :
+0. Install node.js and npm  
+https://nodejs.org/en/  
 
-npm install
-npm start
+1. Install truffle and npm dependencies -  
+npm install  
+npm install -g truffle  
 
-The application will start on localhost:3000
+2. Install ganache - private blockchain simulator  
+https://github.com/trufflesuite/ganache  
 
+3. Run ganache.   
+
+4. Deploy smart contracts :  
+truffle migrate --network ganache  
+
+5. Run tests for Whitelist, Privileged, Crowdsale and Jarvis Reward Token :  
+truffle test --network ganache  
