@@ -32,11 +32,11 @@ module.exports = {
       port: 7545,
       network_id: "5777"
     },
-  	development: {
-  		host: "localhost",
-  		port: 9545,
-  		network_id: "*"
-  	},
+    development: {
+        host: "localhost",
+        port: 9545,
+        network_id: "*"
+    },
   },
   migrations_directory: './migrations',
   solc: {

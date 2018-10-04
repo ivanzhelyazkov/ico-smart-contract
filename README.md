@@ -2,49 +2,49 @@
 ## Smart Contracts for the Crowdsale of Jarvis ICO.
 
 ## Token details :
-Name : Jarvis Reward Token  
-Symbol : JRT  
-Decimals : 2  
-Amount : 420,000,000  
-Price : 0.10 USD  
+Name : Jarvis Reward Token
+Symbol : JRT
+Decimals : 2
+Amount : 420,000,000
+Price : 0.10 USD
 
-Jarvis Reward Token is ERC-20 compliant.  
+Jarvis Reward Token is ERC-20 compliant.
 ETH/USD rate is determined by an oracle.
 
 ## Crowdsale Details :
-Crowdsale will be in 4 stages, one week each :   
-Pre-ICO stage - 30% token bonus  
-ICO stage 1 - 20% token bonus  
-ICO stage 2 - 10% token bonus  
-ICO stage 3 - 0% token bonus  
-Each stage will have a hard cap of 40,000,000 tokens.  
-Tokens will be distributed at the end of the ICO.  
-Unsold tokens will be burnt.  
+Crowdsale will be in 4 stages, one week each :
+Pre-ICO stage - 30% token bonus
+ICO stage 1 - 20% token bonus
+ICO stage 2 - 10% token bonus
+ICO stage 3 - 0% token bonus
+Each stage will have a hard cap of 40,000,000 tokens.
+Tokens will be distributed at the end of the ICO.
+Unsold tokens will be burnt.
 
 ## Token distribution details :
-Team and advisors - 60,000,000  
-DAO Pool - 30,000,000  
-Partnership Pool - 50,000,000  
-Bounty and Airdrop campaign - 20,000,000  
+Team and advisors - 60,000,000
+DAO Pool - 30,000,000
+Partnership Pool - 50,000,000
+Bounty and Airdrop campaign - 20,000,000
 
-ICO - 260,000,000  
+ICO - 260,000,000
 
 ## Developer instructions :
 
-0. Install node.js and npm  
-https://nodejs.org/en/  
+0. Install node.js and npm
+https://nodejs.org/en/
 
-1. Install truffle and npm dependencies -  
-npm install  
-npm install -g truffle  
+1. Install truffle and npm dependencies -
+npm install
+npm install -g truffle
 
-2. Install ganache - private blockchain simulator  
-https://github.com/trufflesuite/ganache  
+2. Install ganache - private blockchain simulator
+https://github.com/trufflesuite/ganache
 
-3. Run ganache.   
+3. Run ganache.
 
-4. Deploy smart contracts :  
-truffle migrate --network ganache  
+4. Deploy smart contracts :
+truffle migrate --network ganache
 
-5. Run tests for Whitelist, Privileged, Crowdsale and Jarvis Reward Token :  
-truffle test --network ganache  
+5. Run tests for Whitelist, Privileged, Crowdsale and Jarvis Reward Token :
+truffle test --network ganache
