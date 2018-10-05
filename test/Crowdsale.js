@@ -1,20 +1,18 @@
+const Whitelist = artifacts.require("Whitelist");
+const Privileged = artifacts.require("Privileged");
 const Crowdsale = artifacts.require("Crowdsale");
 const JarvisToken = artifacts.require("JarvisToken");
 
-const errorMessage = 'VM Exception while processing transaction: revert';
-
-const should = require('chai')
-  .use(require('chai-as-promised'))
-  .should();
-
 contract("Crowdsale", function (accounts) {
   beforeEach(async function () {
+    this.whitelist = await Whitelist.new();
+    this.privileged = await Privileged.new();
     // Set up crowdsale with initial ETH/USD Rate to 200 $
-    this.crowdsale = await Crowdsale.new(20000);
-    this.privileged = await this.crowdsale.privileged;
-    this.whitelist = await this.crowdsale.whitelist;
+    this.crowdsale = await Crowdsale.new(20000, this.privileged.address, this.whitelist.address);
     this.token = await JarvisToken.new(this.crowdsale.address,this.privileged.address);
-    this.crowdsale.setTokenContract(this.token.address);
+    
+    await this.crowdsale.setTokenContract(this.token.address);
+    await this.whitelist.transferOwnership(this.crowdsale.address);
   });
  
   it('Verify private investor allocation and distribution works as expected', async function() {

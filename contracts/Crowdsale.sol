@@ -63,6 +63,10 @@ contract Crowdsale is Pausable, PriceReceiver {
     
     uint256 public icoTotalCollected;
 
+    // Total number of tokens with bonus to be distributed to investors during the crowdsale
+
+    uint256 public totalIcoTokens;
+
     // 1 Jarvis Reward Token = 10 cents
     
     uint256 public constant jrtUsdRate = 10*1e16;
@@ -99,7 +103,7 @@ contract Crowdsale is Pausable, PriceReceiver {
     
     uint256 public bonusTokens;
     
-    // Number of tokens to be distributed in each ICO stage
+    // Number of tokens without bonus to be distributed in each ICO stage
 
     uint256[] public icoTokens;
     
@@ -111,13 +115,13 @@ contract Crowdsale is Pausable, PriceReceiver {
 
     bool[] public icoHardCapsHit;
 
-    // Pre-allocated tokens for private investors, team and bounty campaign participants
+    // Pre-allocated tokens for private investors, team (includes advisors, DAO and Partnership pool) and bounty campaign participants
 
     uint256 public constant investorsAllocation = 76000000*1e2;
 
-    uint256 public constant teamAllocation = 120000000*1e2;
+    uint256 public constant teamAllocation = 140000000*1e2;
 
-    uint256 public constant bountyAllocation = 40000000*1e2;
+    uint256 public constant bountyAllocation = 20000000*1e2;
  
     // Currently allocated amounts using one of the functions for allocation
     
@@ -149,15 +153,15 @@ contract Crowdsale is Pausable, PriceReceiver {
 
     mapping(address => uint256) public bountyAllocated;
 
-    constructor(uint256 _baseEthUsdPrice) public {
-        privileged = new Privileged();
-        whitelist = new Whitelist();
+    constructor(uint256 _baseEthUsdPrice, address privilegedAddress, address whitelistAddress) public {
+        privileged = Privileged(privilegedAddress);
+        whitelist = Whitelist(whitelistAddress);
         installed = false;
 
         for (uint8 i = 0; i < 4; ++i) {
             icoTokens.push(0);
             icoHardCapsHit.push(false);
-            icoHardCaps.push(40000000*1e2);            
+            icoHardCaps.push(40000000*1e2);
         }
 
         ethUsdRate = _baseEthUsdPrice;
@@ -430,9 +434,13 @@ contract Crowdsale is Pausable, PriceReceiver {
             icoTotalCollected = icoTotalCollected.add(investment);
         }
 
-        icoInvestorsTokens[addr] = icoInvestorsTokens[addr].add(tokens.add(bonus));
+        uint256 total = tokens.add(bonus);
+
+        icoInvestorsTokens[addr] = icoInvestorsTokens[addr].add(total);
         history.push(Transaction(addr, investment, tokens, bonus, block.timestamp, false, false));
         emit Investment(addr, investment);
+
+        totalIcoTokens = totalIcoTokens.add(total);
     }
 
     function hardCapCheck(address addr, uint256 tokens, uint256 investment, uint8 stage) private returns (uint256, uint256) {

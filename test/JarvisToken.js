@@ -1,5 +1,6 @@
 const Reward = artifacts.require("JarvisToken");
 const Privileged = artifacts.require("Privileged");
+const Whitelist = artifacts.require("Whitelist");
 const Crowdsale = artifacts.require("Crowdsale");
 
 const errorMessage = 'VM Exception while processing transaction: revert';
@@ -11,7 +12,8 @@ const should = require('chai')
 contract("JarvisToken", function (accounts) {
   beforeEach(async function () {
     this.privileged = await Privileged.new();
-    this.crowdsale = await Crowdsale.new(20000);
+    this.whitelist = await Whitelist.new();
+    this.crowdsale = await Crowdsale.new(20000, this.privileged.address, this.whitelist.address);
     this.jarvistoken = await Reward.new(this.crowdsale.address, this.privileged.address);
   });
  

@@ -6,7 +6,7 @@ const should = require('chai')
   .use(require('chai-as-promised'))
   .should();
 
-contract("whitelist", function (accounts) {
+contract("Whitelist", function (accounts) {
   beforeEach(async function () {
     this.whitelist = await whitelist.new();
   });
