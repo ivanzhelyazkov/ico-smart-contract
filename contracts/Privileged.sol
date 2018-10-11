@@ -6,7 +6,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 contract Privileged is Ownable {
 
     event ChangePrivilegedAccount(address addr);
-    
+
     /**
      * @dev Privileged account status :
      * 0 - address never added
@@ -14,7 +14,7 @@ contract Privileged is Ownable {
      * 2 - privileged address
      * 3 - whitelisting address (Is able to whitelist investors)
      */
-    mapping(address => uint256) public status;
+    mapping(address => uint8) public status;
 
     address[] public privilegedAccounts;
 
@@ -41,7 +41,7 @@ contract Privileged is Ownable {
      * @param addr The address for verification.
      */
     function isWhitelisting(address addr) external view returns (bool) {
-        return status[addr] == 3;
+        return status[addr] == 2 || status[addr] == 3;
     }
 
     /**
@@ -121,13 +121,13 @@ contract Privileged is Ownable {
      * @dev get privileged status by address.
      * @dev Only the owner can view
      * @param addr address Address
-     * @return uint256 Status by address.
+     * @return uint8 Status by address.
      * 0 - address never added
      * 1 - address deactivated
      * 2 - privileged address
      * 3 - whitelisting address
      */
-    function privilegedAccountStatus(address addr) external view onlyOwner returns (uint256) {
+    function privilegedAccountStatus(address addr) external view onlyOwner returns (uint8) {
         return status[addr];
     }
 

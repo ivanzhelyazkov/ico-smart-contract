@@ -34,23 +34,23 @@ contract Crowdsale is Pausable, PriceReceiver {
     }
 
     // Array of Transaction structures for investment.
-    
+
     Transaction[] public history;
-    
+
     // Counter of processed investments.
-    
+
     uint256 public processedCount;
 
     // Array of addresses of investors in Pre-ICO and ICO stages.
-    
+
     address[] public preIcoInvestorsAddresses;
-    
+
     address[] public icoInvestorsAddresses;
 
     // Mapping of investments of Pre-ICO and ICO investors. Key = Investor address, Value = Amount of wei invested in ICO.
-    
+
     mapping(address => uint256) public preIcoInvestors;
-    
+
     mapping(address => uint256) public icoInvestors;
 
     // Mapping of tokens to be received by Pre-ICO and ICO investors. Key = Investor address, Value = Total amount of tokens to receive.
@@ -58,9 +58,9 @@ contract Crowdsale is Pausable, PriceReceiver {
     mapping(address => uint256) public icoInvestorsTokens;
 
     // Amount of wei collected in Pre-ICO and ICO stages.
-    
+
     uint256 public preIcoTotalCollected;
-    
+
     uint256 public icoTotalCollected;
 
     // Total number of tokens with bonus to be distributed to investors during the crowdsale
@@ -68,45 +68,45 @@ contract Crowdsale is Pausable, PriceReceiver {
     uint256 public totalIcoTokens;
 
     // 1 Jarvis Reward Token = 10 cents
-    
+
     uint256 public constant jrtUsdRate = 10*1e16;
 
     // Jarvis Reward Token contract.
-    
+
     JarvisToken public token;
 
     // Privileged contract.
-    
+
     Privileged public privileged;
 
     // Whitelist contract.
-    
+
     Whitelist public whitelist;
 
     // Start and finish time of Pre-ICO and ICO stages.
-    
+
     uint256 public preIcoStartTime;
-    
+
     uint256 public preIcoFinishTime;
-    
+
     uint256 public icoStartTime;
-    
+
     uint256 public icoFinishTime;
 
     // Flag indicating that the ICO dates were set
-    
+
     bool public installed;
 
     // Number of tokens without bonus and bonus tokens distributed to investors.
-    
+
     uint256 public soldTokens;
-    
+
     uint256 public bonusTokens;
-    
+
     // Number of tokens without bonus to be distributed in each ICO stage
 
     uint256[] public icoTokens;
-    
+
     // Hard cap amount in every ICO Stage = 40 000 000 tokens (Unsold tokens are transferred to stage 3 of the ICO)
 
     uint256[] public icoHardCaps;
@@ -122,17 +122,17 @@ contract Crowdsale is Pausable, PriceReceiver {
     uint256 public constant teamAllocation = 140000000*1e2;
 
     uint256 public constant bountyAllocation = 20000000*1e2;
- 
+
     // Currently allocated amounts using one of the functions for allocation
-    
+
     uint256 public investorsTotalAllocated = 0;
 
     uint256 public teamTotalAllocated = 0;
-    
+
     uint256 public bountyTotalAllocated = 0;
 
     // Counters of processed investors, team and bounty program participants
-    
+
     uint256 public investorsProcessed;
 
     uint256 public teamProcessed;
@@ -140,7 +140,7 @@ contract Crowdsale is Pausable, PriceReceiver {
     uint256 public bountyProcessed;
 
     // Adresses and values of pre-allocated tokens for investors, team and bounty program participants
-    
+
     address[] public investorsAllocatedAddresses;
 
     address[] public teamAllocatedAddresses;
@@ -170,9 +170,9 @@ contract Crowdsale is Pausable, PriceReceiver {
 
         ethUsdRate = _baseEthUsdPrice;
     }
-    
+
     // Fallback investor function.
-    
+
     function() public payable {
         buy(msg.sender, msg.value);
     }
@@ -198,7 +198,7 @@ contract Crowdsale is Pausable, PriceReceiver {
         require(destination.length == value.length);
         uint256 len = destination.length;
         uint256 sum = 0;
-        
+
         for (uint256 i = 0; i < len; ++i) {
             require(destination[i] != 0x0);
             sum = sum.add(value[i]);
@@ -229,7 +229,7 @@ contract Crowdsale is Pausable, PriceReceiver {
         teamTotalAllocated = teamTotalAllocated.add(sum);
 
         require(teamTotalAllocated < teamAllocation);
-        
+
         for (uint256 j = 0; j < len; ++j) {
             if (teamAllocated[destination[j]] == 0)
                 teamAllocatedAddresses.push(destination[j]);
@@ -251,7 +251,7 @@ contract Crowdsale is Pausable, PriceReceiver {
         bountyTotalAllocated = bountyTotalAllocated.add(sum);
 
         require(bountyTotalAllocated < bountyAllocation);
-        
+
         for (uint256 j = 0; j < len; ++j) {
             if (bountyAllocated[destination[j]] == 0)
                 bountyAllocatedAddresses.push(destination[j]);
@@ -270,7 +270,7 @@ contract Crowdsale is Pausable, PriceReceiver {
     function distributeToPrivateInvestors(uint256 count) external {
         require(privileged.isPrivileged(msg.sender) || msg.sender == owner);
         require(icoFinished());
-        
+
         uint256 addressesLeft = investorsAllocatedAddresses.length.sub(investorsProcessed);
         uint256 top = investorsProcessed.add(count);
 
@@ -286,7 +286,7 @@ contract Crowdsale is Pausable, PriceReceiver {
     function distributeToTeam(uint256 count) external {
         require(privileged.isPrivileged(msg.sender) || msg.sender == owner);
         require(icoFinished());
-        
+
         uint256 addressesLeft = teamAllocatedAddresses.length.sub(teamProcessed);
         uint256 top = teamProcessed.add(count);
 
@@ -302,7 +302,7 @@ contract Crowdsale is Pausable, PriceReceiver {
     function distributeToBountyParticipants(uint256 count) external {
         require(privileged.isPrivileged(msg.sender) || msg.sender == owner);
         require(icoFinished());
-        
+
         uint256 addressesLeft = bountyAllocatedAddresses.length.sub(bountyProcessed);
         uint256 top = bountyProcessed.add(count);
 
@@ -314,7 +314,7 @@ contract Crowdsale is Pausable, PriceReceiver {
             ++bountyProcessed;
         }
     }
-    
+
     /**
     * @dev Function for manual transfer of tokens to investors.
     * @dev As soon as the function processes the entire array of transaction indices, it stops executing successfully.
@@ -357,13 +357,13 @@ contract Crowdsale is Pausable, PriceReceiver {
         }
     }
 
-    /** 
+    /**
     * @dev Function to transfer the number of tokens to investors
     * @param transaction Transaction log
     * @param index Index of transaction in history
     */
     function processTransaction(Transaction transaction, uint256 index) private {
-        
+
         if (transaction.processed) {
             return;
         }
@@ -410,10 +410,10 @@ contract Crowdsale is Pausable, PriceReceiver {
 
             if (preIcoInvestors[addr] == 0)
                 preIcoInvestorsAddresses.push(addr);
-            
+
             preIcoInvestors[addr] = preIcoInvestors[addr].add(investment);
             preIcoTotalCollected = preIcoTotalCollected.add(investment);
-        } 
+        }
         else {
             if (icoStage1()) {
                 (investment, tokens) = hardCapCheck(addr, tokens, investment, 1);
@@ -433,7 +433,7 @@ contract Crowdsale is Pausable, PriceReceiver {
 
             if (icoInvestors[addr] == 0)
                 icoInvestorsAddresses.push(addr);
-            
+
             icoInvestors[addr] = icoInvestors[addr].add(investment);
             icoTotalCollected = icoTotalCollected.add(investment);
         }
@@ -539,7 +539,7 @@ contract Crowdsale is Pausable, PriceReceiver {
      * @return bool true if PreIco Stage is now.
      */
     function preIcoStage() public view returns (bool) {
-        return (installed && block.timestamp >= preIcoStartTime && 
+        return (installed && block.timestamp >= preIcoStartTime &&
                                 block.timestamp <= preIcoFinishTime);
     }
 
@@ -634,7 +634,7 @@ contract Crowdsale is Pausable, PriceReceiver {
         require(icoFinished());
         token.privilegedBurn(amount);
     }
-    
+
     // Privileged functions
 
     /**
@@ -685,12 +685,12 @@ contract Crowdsale is Pausable, PriceReceiver {
      * @dev get privileged status by address.
      * @dev Only the owner can view
      * @param addr Address
-     * @return uint256 Status by address.
+     * @return uint8 Status by address.
      * 0 - address never added
      * 1 - address deactivated
      * 2 - privileged address
      */
-    function privilegedAccountStatus(address addr) external view onlyOwner returns (uint256) {
+    function privilegedAccountStatus(address addr) external view onlyOwner returns (uint8) {
         return privileged.privilegedAccountStatus(addr);
     }
 
@@ -721,23 +721,21 @@ contract Crowdsale is Pausable, PriceReceiver {
     }
 
     function addToWhitelist(address whitelisted) external {
-        require(msg.sender == owner || 
-        privileged.isPrivileged(msg.sender) || 
+        require(msg.sender == owner ||
         privileged.isWhitelisting(msg.sender));
 
         whitelist.addInvestorToWhitelist(whitelisted);
     }
 
     function addInvestorsToWhitelist(address[] whitelisted) external {
-        require(msg.sender == owner || 
-        privileged.isPrivileged(msg.sender) || 
+        require(msg.sender == owner ||
         privileged.isWhitelisting(msg.sender));
 
         whitelist.addInvestorsToWhitelist(whitelisted);
     }
 
     function removeFromWhitelist(address whitelisted) external {
-        require(msg.sender == owner || 
+        require(msg.sender == owner ||
         privileged.isPrivileged(msg.sender));
 
         whitelist.removeInvestorFromWhitelist(whitelisted);
