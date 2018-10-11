@@ -10,21 +10,21 @@ contract("Crowdsale", function (accounts) {
     // Set up crowdsale with initial ETH/USD Rate to 200 $
     this.crowdsale = await Crowdsale.new(20000, this.privileged.address, this.whitelist.address);
     this.token = await JarvisToken.new(this.crowdsale.address,this.privileged.address);
-    
+
     await this.crowdsale.setTokenContract(this.token.address);
     await this.whitelist.transferOwnership(this.crowdsale.address);
   });
- 
+
   it('Verify private investor allocation and distribution works as expected', async function() {
-    
+
     // Set ICO to finished
     await this.crowdsale.setDates(Math.floor(Date.now() / 1000) - 4, 1, 1);
-    
+
     await this.crowdsale.addInvestorAllocation([accounts[0],accounts[1]],[10000,20000]);
 
     let allocatedFirst = await this.crowdsale.investorsAllocated(accounts[0]);
     let allocatedSecond = await this.crowdsale.investorsAllocated(accounts[1]);
-    
+
     assert.equal(allocatedFirst, 10000);
     assert.equal(allocatedSecond, 20000);
 
@@ -56,7 +56,7 @@ contract("Crowdsale", function (accounts) {
  });
 
   it('Verify investment function works correctly', async function() {
-    
+
     // Set ICO Dates
     await this.crowdsale.setDates(Math.floor(Date.now() / 1000), 30, 30);
     let ethUsdRate = await this.crowdsale.ethUsdRate.call();
@@ -93,20 +93,20 @@ contract("Crowdsale", function (accounts) {
     let expectedHardCap = await (this.crowdsale.icoHardCaps.call(0))*4;
 
     let actualHardCap = await this.crowdsale.icoHardCaps.call(3);
-    
+
     assert.equal(expectedHardCap, actualHardCap)
   })
 
-  function wait(ms){
+  function wait(ms) {
     var start = new Date().getTime();
     var end = start;
     while(end < start + ms) {
       end = new Date().getTime();
-   }
- }
+    }
+  }
 
   it('Verify ICO investor distribution functions work as expected', async function() {
-    
+
     var week = 604800;
     var date = new Date();
     date.setDate(date.getDate() - 28);
@@ -164,4 +164,4 @@ contract("Crowdsale", function (accounts) {
   })
 
 });
- 
+
