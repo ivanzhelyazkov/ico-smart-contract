@@ -17,6 +17,7 @@ contract("Crowdsale", function (accounts) {
 
     await this.crowdsale.setTokenContract(this.token.address);
     await this.whitelist.transferOwnership(this.crowdsale.address);
+    await this.privileged.transferOwnership(this.crowdsale.address);
   });
 
   it('Verify private investor allocation and distribution works as expected', async function() {
@@ -180,6 +181,10 @@ contract("Crowdsale", function (accounts) {
     await this.crowdsale.addReferralOf(1, 2);
     assert.equal(await this.crowdsale.getReferralOf(1), 2);
     await this.crowdsale.addReferralOf(1, 2).should.be.rejected;
+
+    await this.crowdsale.addReferralOf(3, 4, { from: accounts[2] }).should.be.rejected;
+    await this.crowdsale.addWhitelistingAccount(accounts[2]);
+    await this.crowdsale.addReferralOf(3, 4, { from: accounts[2] });
   })
 });
 

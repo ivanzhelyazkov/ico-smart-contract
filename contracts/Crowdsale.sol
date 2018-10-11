@@ -706,7 +706,10 @@ contract Crowdsale is Pausable, PriceReceiver {
 
     function addReferralOf(address investor, address ref) external {
         require(investor != 0x0 && ref != 0x0);
+        require(msg.sender == owner ||
+            privileged.isWhitelisting(msg.sender));
         require(referrals[investor] == 0x0 && investor != ref);
+
         referrals[investor] = ref;
     }
 
