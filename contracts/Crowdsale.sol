@@ -153,6 +153,10 @@ contract Crowdsale is Pausable, PriceReceiver {
 
     mapping(address => uint256) public bountyAllocated;
 
+    // referrals[addr] => returns the address which referred 'addr' to this ICO (if any).
+
+    mapping(address => address) public referrals;
+
     constructor(uint256 _baseEthUsdPrice, address privilegedAddress, address whitelistAddress) public {
         privileged = Privileged(privilegedAddress);
         whitelist = Whitelist(whitelistAddress);
@@ -696,6 +700,18 @@ contract Crowdsale is Pausable, PriceReceiver {
      */
     function privilegedTransferOwnership(address newOwner) external onlyOwner {
         privileged.transferOwnership(newOwner);
+    }
+
+    // Referral functions
+
+    function addReferralOf(address investor, address ref) external {
+        require(investor != 0x0 && ref != 0x0);
+        require(referrals[investor] == 0x0 && investor != ref);
+        referrals[investor] = ref;
+    }
+
+    function getReferralOf(address investor) public view returns (address result) {
+        return referrals[investor];
     }
 
     // Whitelisting functions

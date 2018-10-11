@@ -3,6 +3,10 @@ const Privileged = artifacts.require("Privileged");
 const Crowdsale = artifacts.require("Crowdsale");
 const JarvisToken = artifacts.require("JarvisToken");
 
+const should = require('chai')
+  .use(require('chai-as-promised'))
+  .should();
+
 contract("Crowdsale", function (accounts) {
   beforeEach(async function () {
     this.whitelist = await Whitelist.new();
@@ -163,5 +167,19 @@ contract("Crowdsale", function (accounts) {
     assert.equal(balance4.toNumber(), 0);
   })
 
+  it('Verify referral functionality', async function() {
+    for (let acc of accounts) {
+      assert.equal(await this.crowdsale.getReferralOf(acc), 0);
+    }
+
+    await this.crowdsale.addReferralOf(0, 0).should.be.rejected;
+    await this.crowdsale.addReferralOf(0, 1).should.be.rejected;
+    await this.crowdsale.addReferralOf(1, 0).should.be.rejected;
+    await this.crowdsale.addReferralOf(1, 1).should.be.rejected;
+
+    await this.crowdsale.addReferralOf(1, 2);
+    assert.equal(await this.crowdsale.getReferralOf(1), 2);
+    await this.crowdsale.addReferralOf(1, 2).should.be.rejected;
+  })
 });
 
