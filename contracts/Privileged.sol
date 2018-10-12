@@ -40,7 +40,7 @@ contract Privileged is Ownable {
      * @dev check if address is able to whitelist investors.
      * @param addr The address for verification.
      */
-    function isWhitelisting(address addr) external view returns (bool) {
+    function canWhitelist(address addr) external view returns (bool) {
         return status[addr] == 2 || status[addr] == 3;
     }
 
@@ -68,7 +68,7 @@ contract Privileged is Ownable {
     }
 
     /**
-     * @dev Add address to be whitelisting.
+     * @dev enable an address to be able to whitelist.
      */
     function addWhitelistingAccount(address addr) external onlyOwner returns (bool) {
         require(addr != address(0));

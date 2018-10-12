@@ -51,7 +51,7 @@ it('Verify that accounts which are whitelisting work as expected', async functio
   await this.privileged.addWhitelistingAccount(web3.eth.accounts[1]);
 
   // Account should be whitelisting
-  var result = await this.privileged.isWhitelisting(web3.eth.accounts[1]);
+  var result = await this.privileged.canWhitelist(web3.eth.accounts[1]);
 
   // Account status should be '3'
   var status = await this.privileged.privilegedAccountStatus(web3.eth.accounts[1]);
@@ -62,7 +62,7 @@ it('Verify that accounts which are whitelisting work as expected', async functio
   await this.privileged.removeFromPrivileged(web3.eth.accounts[1]);
 
   // Account should be deactivated
-  result = await this.privileged.isWhitelisting(web3.eth.accounts[1]);
+  result = await this.privileged.canWhitelist(web3.eth.accounts[1]);
 
   // Account status should be '1'
   status = await this.privileged.privilegedAccountStatus(web3.eth.accounts[1]);
