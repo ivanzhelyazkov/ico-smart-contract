@@ -269,7 +269,7 @@ contract Crowdsale is Pausable, PriceReceiver {
      */
     function distributeToPrivateInvestors(uint256 count) external {
         require(privileged.isPrivileged(msg.sender) || msg.sender == owner);
-        require(icoFinished());
+        require(preIcoFinished());
 
         uint256 addressesLeft = investorsAllocatedAddresses.length.sub(investorsProcessed);
         uint256 top = investorsProcessed.add(count);
@@ -323,7 +323,7 @@ contract Crowdsale is Pausable, PriceReceiver {
     */
     function distributeManual(uint256[] transactions) external {
         require(privileged.isPrivileged(msg.sender) || msg.sender == owner);
-        require(icoFinished());
+        require(preIcoFinished());
 
         uint256 j = 0;
         uint256 i = 0;
@@ -343,7 +343,7 @@ contract Crowdsale is Pausable, PriceReceiver {
     */
     function distributeAutomatic(uint256 transactions) external {
         require(privileged.isPrivileged(msg.sender) || msg.sender == owner);
-        require(icoFinished());
+        require(preIcoFinished());
         require(processedCount < history.length);
 
         uint256 count = 0;
@@ -471,7 +471,7 @@ contract Crowdsale is Pausable, PriceReceiver {
      * @param weiToWithdraw  Amount of wei for transaction.
      */
     function withdraw(uint256 weiToWithdraw) external whenNotPaused {
-        require(icoFinished());
+        require(preIcoFinished());
         require(privileged.isPrivileged(msg.sender) || msg.sender == owner);
         require(weiToWithdraw <= address(this).balance);
         require(weiToWithdraw != 0);
@@ -485,7 +485,7 @@ contract Crowdsale is Pausable, PriceReceiver {
     */
     function refund(address toBeRefunded) external {
         require(privileged.isPrivileged(msg.sender) || msg.sender == owner);
-        require(icoFinished());
+        require(preIcoFinished());
 
         if (preIcoInvestors[toBeRefunded] > 0)
             toBeRefunded.transfer(preIcoInvestors[toBeRefunded]);
@@ -519,16 +519,16 @@ contract Crowdsale is Pausable, PriceReceiver {
      * @param preIcoDuration  PreIco duration.
      * @param icoDuration Ico duration.
      */
-    function setDates(uint256 preIcoStart, uint256 preIcoDuration, uint256 icoDuration) public onlyOwner {
+    function setDates(uint256 preIcoStart, uint256 preIcoDuration, uint256 icoStart, uint256 icoDuration) public onlyOwner {
         require(!installed);
-        require(preIcoStart != 0);
+        require(preIcoStart != 0 && icoStart != 0);
         require(preIcoDuration != 0 && icoDuration != 0);
         require(preIcoFinishTime == 0 && icoFinishTime == 0);
 
         preIcoStartTime = preIcoStart;
         preIcoFinishTime = preIcoStart.add(preIcoDuration);
 
-        icoStartTime = preIcoFinishTime + 1 seconds;
+        icoStartTime = icoStart;
         icoFinishTime = icoStartTime.add(icoDuration);
 
         installed = true;
@@ -561,10 +561,14 @@ contract Crowdsale is Pausable, PriceReceiver {
                                 block.timestamp <= icoFinishTime);
     }
 
-    /**
-     * @dev check Ico Finish.
-     * @return bool true if Ico Finished.
-     */
+    /*
+    * @dev Check if the pre-ico or ico is finished.
+    */
+
+    function preIcoFinished() public view returns (bool) {
+        return (installed && preIcoFinishTime != 0 && block.timestamp >= preIcoFinishTime);
+    }
+    
     function icoFinished() public view returns (bool) {
         return (installed && icoFinishTime != 0 && block.timestamp >= icoFinishTime);
     }

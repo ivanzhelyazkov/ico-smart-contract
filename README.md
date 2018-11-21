@@ -14,7 +14,7 @@ ETH/USD rate is determined by an oracle.
 
 ## Crowdsale Details:
 Crowdsale will be in 4 stages, one week each:
-* ICO stage 1 - 30% token bonus
+* Pre-ICO stage - 30% token bonus
 * ICO stage 2 - 20% token bonus
 * ICO stage 3 - 10% token bonus
 * ICO stage 4 - 0% token bonus
