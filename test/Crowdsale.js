@@ -23,7 +23,8 @@ contract("Crowdsale", function (accounts) {
   it('Verify private investor allocation and distribution works as expected', async function() {
 
     // Set ICO to finished
-    await this.crowdsale.setDates(Math.floor(Date.now() / 1000) - 4, 1, 1);
+    let fourSecondsAgo = Math.floor(Date.now() / 1000) - 4;
+    await this.crowdsale.setDates(fourSecondsAgo, 1, fourSecondsAgo + 1, 1);
 
     await this.crowdsale.addInvestorAllocation([accounts[0],accounts[1]],[10000,20000]);
 
@@ -63,7 +64,8 @@ contract("Crowdsale", function (accounts) {
   it('Verify investment function works correctly', async function() {
 
     // Set ICO Dates
-    await this.crowdsale.setDates(Math.floor(Date.now() / 1000), 30, 30);
+    let now = Math.floor(Date.now() / 1000);
+    await this.crowdsale.setDates(now, 30, now + 30, 30);
     let ethUsdRate = await this.crowdsale.ethUsdRate.call();
     let jrtUsdRate = await this.crowdsale.jrtUsdRate.call();
 
@@ -89,7 +91,7 @@ contract("Crowdsale", function (accounts) {
     var week = 604800;
     var date = new Date();
     date.setDate(date.getDate() - 22);
-    await this.crowdsale.setDates(Math.floor(date / 1000), week, week*3);
+    await this.crowdsale.setDates(Math.floor(date / 1000), week, Math.floor(date / 1000) + week, week*3);
 
     // Move the unsold tokens to stage 3 hard cap
     await this.crowdsale.moveUnsold();
@@ -102,32 +104,21 @@ contract("Crowdsale", function (accounts) {
     assert.equal(expectedHardCap, actualHardCap)
   })
 
-  function wait(ms) {
-    var start = new Date().getTime();
-    var end = start;
-    while(end < start + ms) {
-      end = new Date().getTime();
-    }
-  }
-
   it('Verify ICO investor distribution functions work as expected', async function() {
 
     var week = 604800;
     var date = new Date();
     date.setDate(date.getDate() - 28);
-    await this.crowdsale.setDates(Math.floor(date / 1000), week, week*3+3);
+    await this.crowdsale.setDates(Math.floor(date / 1000), week, Math.floor(date / 1000) + week, week * 4);
 
     for(let i = 0; i < 5; ++i) {
-      await this.crowdsale.sendTransaction({value:web3.toWei(10), from:web3.eth.accounts[i], gas: 300000});
+      await this.crowdsale.sendTransaction({value:web3.toWei(1), from:web3.eth.accounts[i], gas: 300000});
       await this.crowdsale.addToWhitelist(web3.eth.accounts[i]);
       let tx = await this.crowdsale.historyRecord.call(i);
-      assert.equal(tx[1], web3.toWei(10));
+      assert.equal(tx[1], web3.toWei(1));
     }
-
     // De-whitelist the last investor (account 4)
     await this.crowdsale.removeFromWhitelist(web3.eth.accounts[4]);
-
-    wait(2000);
 
     // Distribute only to accounts 1 and 3
     await this.crowdsale.distributeManual(['1','3']);
@@ -157,9 +148,9 @@ contract("Crowdsale", function (accounts) {
     let balance2 = await this.token.balanceOf(web3.eth.accounts[2]);
     let balance4 = await this.token.balanceOf(web3.eth.accounts[4]);
 
+    // Assert account 0 and 2 have been processed and have received tokens, because they are whitelisted
     assert.equal(tx0[5], true);
     assert.equal(tx2[5], true);
-
     assert.isAbove(balance0.toNumber(),0);
     assert.isAbove(balance2.toNumber(),0);
 
